@@ -1,4 +1,4 @@
-# Generated from Expr.g4 by ANTLR 4.13.1
+# Generated from c:/Users/kphan/OneDrive/Plocha/School - all/PJP - 3rd/project/Expr.g4 by ANTLR 4.13.1
 from antlr4 import *
 if "." in __name__:
     from .ExprParser import ExprParser
@@ -14,6 +14,11 @@ class ExprVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by ExprParser#primitiveType.
+    def visitPrimitiveType(self, ctx:ExprParser.PrimitiveTypeContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by ExprParser#blockOfStatements.
     def visitBlockOfStatements(self, ctx:ExprParser.BlockOfStatementsContext):
         return self.visitChildren(ctx)
@@ -21,6 +26,11 @@ class ExprVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by ExprParser#declaration.
     def visitDeclaration(self, ctx:ExprParser.DeclarationContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ExprParser#for.
+    def visitFor(self, ctx:ExprParser.ForContext):
         return self.visitChildren(ctx)
 
 

@@ -3,6 +3,15 @@ grammar Expr;
 program: statement+ EOF ;
 // Keywords
 
+WS : [ \t\r\n]+ -> skip;
+
+primitiveType
+    : type=INT
+    | type=FLOAT
+    | type=STRING
+    | type=BOOLEAN
+    ;
+
 BOOLEAN:    'bool';
 FLOAT:      'float';
 INT:        'int';
@@ -13,6 +22,7 @@ WRITE:      'write' ;
 IF:         'if';
 WHILE:      'while';
 ELSE:       'else';
+FOR:        'for';
 
 SEMI:       ';';
 COMMA:      ',';
@@ -30,12 +40,13 @@ NEQ :       '!=' ;
 AND :       '&&' ;
 OR :        '||' ;
 
+
 IDENTIFIER : [a-zA-Z] ([a-zA-Z0-9]*)? ; 
 
 // Literals
 
-DECIMAL_LITERAL:    [1-9]+;
-FLOAT_LITERAL:      [1-9]+ '.' [1-9]+;
+DECIMAL_LITERAL:    [0-9]+;
+FLOAT_LITERAL:      [0-9]+ CON [0-9]+;
 BOOL_LITERAL:       'true'
             |       'false'
             ;
@@ -48,33 +59,35 @@ fragment EscapeSequence
 
 
 
-// STATEMENTS
-
+// STATEMENTS-EXPRESSION
 
 statement
-    : '{' statement* '}'                                    # blockOfStatements     // YY
-    | (BOOLEAN | INT | FLOAT | STRING) IDENTIFIER ( ',' IDENTIFIER)* ';'    # declaration           // YY
-    | IF '(' expr ')' pos=statement (ELSE neg=statement)?   # ifElse                // YY
-    | WHILE '(' expr ')' statement                          # while                 // Y
-    | READ IDENTIFIER ( ',' IDENTIFIER)* ';'             # readStatement            // YY
-    | WRITE expr ( ',' expr)* ';'                        # writeStatement           // YY
-    | expr ';'                                             # printExpr              // YY
-    | ';'                                                  # emptyStatement         // Y
+    : '{' statement* '}'                                                    # blockOfStatements     
+    | primitiveType IDENTIFIER ( COMMA IDENTIFIER)* SEMI                    # declaration          
+    | FOR '(' init=expr SEMI cond=expr SEMI update=expr ')' loop=statement  # for 
+    | IF '(' expr ')' pos=statement (ELSE neg=statement)?                   # ifElse                
+    | WHILE '(' expr ')' statement                                          # while                 
+    | READ IDENTIFIER ( COMMA IDENTIFIER)* SEMI                             # readStatement            
+    | WRITE expr ( COMMA expr)* SEMI                                        # writeStatement           
+    | expr SEMI                                                             # printExpr              
+    | SEMI                                                                  # emptyStatement        
     ;
 
-expr: IDENTIFIER                            # id            // YY
-    | ('true'|'false')                      # bool          // YY
-    | '(' expr ')'                          # parens        // YY
-    | INT                                   # int           // YY
-    | FLOAT                                 # float         // YY
-    | STRING                                # string        // YY
-    | prefix=SUB expr                       # unaryMinus    // YY
-    | prefix=NEG expr                       # negation      // YY
-    | expr op=(MUL|DIV|MOD) expr            # mulDivMod     // YY
-    | expr op=(ADD|SUB|CON) expr            # addSubCon     // YY
-    | expr op=(LES|GRE) expr                # relation      // YY
-    | expr op=(EQ|NEQ) expr                 # comparison    // YY
-    | expr AND expr                         # logicalAnd    // YY
-    | expr OR expr                          # logicalOr     // YY
-    | <assoc=right> IDENTIFIER '=' expr     # assignment    // YY
+expr: IDENTIFIER                            # id            
+    | ('true'|'false')                      # bool
+    | DECIMAL_LITERAL                       # int
+    | FLOAT_LITERAL                         # float
+    | STRING_LITERAL                        # string          
+    | '(' expr ')'                          # parens        
+    | prefix=SUB expr                       # unaryMinus    
+    | prefix=NEG expr                       # negation      
+    | left=expr op=(MUL|DIV|MOD) right=expr # mulDivMod     
+    | left=expr op=(ADD|SUB|CON) right=expr # addSubCon    
+    | left=expr op=(LES|GRE) right=expr     # relation     
+    | left=expr op=(EQ|NEQ) right=expr      # comparison   
+    | expr AND expr                         # logicalAnd   
+    | expr OR expr                          # logicalOr     
+    | <assoc=right> IDENTIFIER '=' expr     # assignment
     ;
+
+

@@ -1,4 +1,4 @@
-# Generated from Expr.g4 by ANTLR 4.13.1
+# Generated from c:/Users/kphan/OneDrive/Plocha/School - all/PJP - 3rd/project/Expr.g4 by ANTLR 4.13.1
 from antlr4 import *
 if "." in __name__:
     from .ExprParser import ExprParser
@@ -17,6 +17,15 @@ class ExprListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by ExprParser#primitiveType.
+    def enterPrimitiveType(self, ctx:ExprParser.PrimitiveTypeContext):
+        pass
+
+    # Exit a parse tree produced by ExprParser#primitiveType.
+    def exitPrimitiveType(self, ctx:ExprParser.PrimitiveTypeContext):
+        pass
+
+
     # Enter a parse tree produced by ExprParser#blockOfStatements.
     def enterBlockOfStatements(self, ctx:ExprParser.BlockOfStatementsContext):
         pass
@@ -32,6 +41,15 @@ class ExprListener(ParseTreeListener):
 
     # Exit a parse tree produced by ExprParser#declaration.
     def exitDeclaration(self, ctx:ExprParser.DeclarationContext):
+        pass
+
+
+    # Enter a parse tree produced by ExprParser#for.
+    def enterFor(self, ctx:ExprParser.ForContext):
+        pass
+
+    # Exit a parse tree produced by ExprParser#for.
+    def exitFor(self, ctx:ExprParser.ForContext):
         pass
 
 
