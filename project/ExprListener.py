@@ -125,15 +125,6 @@ class ExprListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by ExprParser#negation.
-    def enterNegation(self, ctx:ExprParser.NegationContext):
-        pass
-
-    # Exit a parse tree produced by ExprParser#negation.
-    def exitNegation(self, ctx:ExprParser.NegationContext):
-        pass
-
-
     # Enter a parse tree produced by ExprParser#comparison.
     def enterComparison(self, ctx:ExprParser.ComparisonContext):
         pass
@@ -212,15 +203,6 @@ class ExprListener(ParseTreeListener):
 
     # Exit a parse tree produced by ExprParser#addSubCon.
     def exitAddSubCon(self, ctx:ExprParser.AddSubConContext):
-        pass
-
-
-    # Enter a parse tree produced by ExprParser#unaryMinus.
-    def enterUnaryMinus(self, ctx:ExprParser.UnaryMinusContext):
-        pass
-
-    # Exit a parse tree produced by ExprParser#unaryMinus.
-    def exitUnaryMinus(self, ctx:ExprParser.UnaryMinusContext):
         pass
 
 

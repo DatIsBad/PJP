@@ -65,7 +65,7 @@ statement
     : '{' statement* '}'                                                    # blockOfStatements     
     | primitiveType IDENTIFIER ( COMMA IDENTIFIER)* SEMI                    # declaration          
     | FOR '(' init=expr SEMI cond=expr SEMI update=expr ')' loop=statement  # for 
-    | IF '(' expr ')' pos=statement (ELSE neg=statement)?                   # ifElse                
+    | IF '(' cond=expr ')' pos=statement (ELSE neg=statement)?                   # ifElse                
     | WHILE '(' expr ')' statement                                          # while                 
     | READ IDENTIFIER ( COMMA IDENTIFIER)* SEMI                             # readStatement            
     | WRITE expr ( COMMA expr)* SEMI                                        # writeStatement           
@@ -78,9 +78,7 @@ expr: IDENTIFIER                            # id
     | DECIMAL_LITERAL                       # int
     | FLOAT_LITERAL                         # float
     | STRING_LITERAL                        # string          
-    | '(' expr ')'                          # parens        
-    | prefix=SUB expr                       # unaryMinus    
-    | prefix=NEG expr                       # negation      
+    | '(' expr ')'                          # parens
     | left=expr op=(MUL|DIV|MOD) right=expr # mulDivMod     
     | left=expr op=(ADD|SUB|CON) right=expr # addSubCon    
     | left=expr op=(LES|GRE) right=expr     # relation     

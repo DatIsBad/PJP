@@ -1,11 +1,13 @@
 from antlr4 import *
 from ExprLexer import ExprLexer
 from ExprParser import ExprParser
-from ExprInterp import TypeCheck
-from codeGenerator import CodeGenerator
+from TypeCheck import TypeCheck
+from CodeGenerator import CodeGenerator
+from VirtualMachine import VirtualMachine
 
 
-input_stream = FileStream("input2.txt")
+filename = "input3.txt"
+input_stream = FileStream(filename)
 lexer = ExprLexer(input_stream)
 stream = CommonTokenStream(lexer)
 parser = ExprParser(stream)
@@ -18,9 +20,14 @@ tree = parser.program()
 
 codeGen = CodeGenerator()
 codeGen.visit(tree)
-codeGen.intofile("code.txt")
+codeGen.intofile(filename)
 print(codeGen)
+print('--------------')
 
+vMachine = VirtualMachine()
+vMachine.loadData(codeGen.lines)
+vMachine.startMachine()
 
+#print(type(True).__name__)
 
 #print(tree.toStringTree(recog=parser))
