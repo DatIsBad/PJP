@@ -4,6 +4,8 @@ program: statement+ EOF ;
 // Keywords
 
 WS : [ \t\r\n]+ -> skip;
+COMMENT: '/*' .*? '*/' -> skip ;
+LINE_COMMENT: '//' ~[\r\n]* -> skip ;
 
 primitiveType
     : type=INT
@@ -65,9 +67,9 @@ statement
     : '{' statement* '}'                                                    # blockOfStatements     
     | primitiveType IDENTIFIER ( COMMA IDENTIFIER)* SEMI                    # declaration          
     | FOR '(' init=expr SEMI cond=expr SEMI update=expr ')' loop=statement  # for 
-    | IF '(' cond=expr ')' pos=statement (ELSE neg=statement)?                   # ifElse                
-    | WHILE '(' expr ')' statement                                          # while                 
-    | READ IDENTIFIER ( COMMA IDENTIFIER)* SEMI                             # readStatement            
+    | IF '(' cond=expr ')' pos=statement (ELSE neg=statement)?              # ifElse                
+    | WHILE '(' cond=expr ')' loop=statement                                # while
+    | READ IDENTIFIER ( COMMA IDENTIFIER)* SEMI                             # readStatement 
     | WRITE expr ( COMMA expr)* SEMI                                        # writeStatement           
     | expr SEMI                                                             # printExpr              
     | SEMI                                                                  # emptyStatement        
@@ -79,12 +81,14 @@ expr: IDENTIFIER                            # id
     | FLOAT_LITERAL                         # float
     | STRING_LITERAL                        # string          
     | '(' expr ')'                          # parens
+    | prefix=SUB right=expr                 # unaryMinus    
+    | prefix=NEG right=expr                 # negation      
     | left=expr op=(MUL|DIV|MOD) right=expr # mulDivMod     
     | left=expr op=(ADD|SUB|CON) right=expr # addSubCon    
     | left=expr op=(LES|GRE) right=expr     # relation     
-    | left=expr op=(EQ|NEQ) right=expr      # comparison   
-    | expr AND expr                         # logicalAnd   
-    | expr OR expr                          # logicalOr     
+    | left=expr op=(EQ|NEQ) right=expr      # comparison
+    | left=expr AND right=expr              # logicalAnd   
+    | left=expr OR right= expr              # logicalOr     
     | <assoc=right> IDENTIFIER '=' expr     # assignment
     ;
 

@@ -12,8 +12,8 @@ class VirtualMachine():
         self.labels = {}
         self.whereAmI = 0
 
-    def loadData(self, input:list):
-        self.lines = input
+    def loadData(self, temp:list):
+        self.lines = temp
 
     def loadDataFromFile(self, filename:str):
         for line in open(filename, 'r'):
@@ -28,7 +28,7 @@ class VirtualMachine():
 
         self.loadLabels()
 
-        while self.whereAmI < (len(self.lines) - 1):
+        while self.whereAmI < (len(self.lines) ):
             self.lineProcess()
             self.whereAmI += 1
             pass
@@ -53,30 +53,49 @@ class VirtualMachine():
                 self.save(line[1], line[2])
             case 'load':
                 self.load(line[1], line[2])
+
             case 'itof':
                 self.itof()
             case 'mul':
                 self.mul()
             case 'div':
                 self.div()
+            case 'mod':
+                self.mod()
             case 'add':
                 self.add()
             case 'sub':
                 self.sub()
+            case 'concat':
+                self.concat()
+            case 'uminus':
+                self.uminus()
+
             case 'jmp':
                 self.jmp(line[1])
-            case 'jeq':
-                self.jeq(line[1])
-            case 'jneq':
-                self.jneq(line[1])
-            case 'jlt':
-                self.jlt(line[1])
-            case 'jgt':
-                self.jgt(line[1])
+            case 'fjmp':
+                self.fjmp(line[1])
+            case 'eq':
+                self.eq()
+            case 'lt':
+                self.lt()
+            case 'gt':
+                self.gt()
+
+            case 'not':
+                self.notF()
+            case 'and':
+                self.andF()
+            case 'or':
+                self.orF()
+
             case 'pop':
                 self.pop()
             case 'write':
                 self.write(line[1])
+            case 'read':
+                self.read(line[1])
+
             case _:
                 pass
 
@@ -152,11 +171,27 @@ class VirtualMachine():
     #---------------
     def div(self):
         numbers = self.buffer[-2:]
-        result = numbers[0] / numbers[1]
+
+        if(type(numbers[0]).__name__ == 'int'):
+            result = int(numbers[0] / numbers[1])
+        else:
+            result = numbers[0] / numbers[1]
 
         self.buffer.pop()
         self.buffer.pop()
         
+        self.buffer.append(result)
+    
+
+    #---------------
+    def mod(self):
+        numbers = self.buffer[-2:]
+
+        result = numbers[0] % numbers[1]
+
+        self.buffer.pop()
+        self.buffer.pop()
+
         self.buffer.append(result)
 
 
@@ -181,6 +216,21 @@ class VirtualMachine():
         
         self.buffer.append(result)
 
+        
+    #---------------
+    def concat(self):
+        numbers = self.buffer[-2:]
+        result = f'{numbers[0]}{numbers[1]}'
+
+        self.buffer.pop()
+        self.buffer.pop()
+
+        self.buffer.append(result)
+
+    #---------------
+    def uminus(self):
+        self.buffer[ len(self.buffer) - 1 ] = self.buffer[ len(self.buffer) - 1 ] * (-1)
+
 
     #---------------
     def jmp(self, label):
@@ -188,39 +238,66 @@ class VirtualMachine():
 
 
     #---------------
-    def jeq(self, label):
+    def fjmp(self, label):
+        values = self.buffer[-1:]
+        if values[0] == False:
+            self.whereAmI = self.labels[label]
+        self.buffer.pop()
+
+    #---------------
+    def eq(self):
         values = self.buffer[-2:]
+        self.buffer.pop()
+        self.buffer.pop()
         if values[0] == values[1]:
-            self.whereAmI = self.labels[label]
-        self.buffer.pop()
-        self.buffer.pop()
+            self.buffer.append(True)
+        else:
+            self.buffer.append(False)
 
 
     #---------------
-    def jneq(self, label):
+    def lt(self):
         values = self.buffer[-2:]
-        if values[0] != values[1]:
-            self.whereAmI = self.labels[label]
         self.buffer.pop()
         self.buffer.pop()
-
-
-    #---------------
-    def jlt(self, label):
-        values = self.buffer[-2:]
         if values[0] < values[1]:
-            self.whereAmI = self.labels[label]
-        self.buffer.pop()
-        self.buffer.pop()
+            self.buffer.append(True)
+        else:
+            self.buffer.append(False)
 
 
     #---------------
-    def jgt(self, label):
+    def gt(self):
         values = self.buffer[-2:]
+        self.buffer.pop()
+        self.buffer.pop()
         if values[0] > values[1]:
-            self.whereAmI = self.labels[label]
+            self.buffer.append(True)
+        else:
+            self.buffer.append(False)
+    
+
+    #---------------
+    def notF(self):
+        values = self.buffer[-1:]
+        self.buffer.pop()
+        self.buffer.append(not values[0])
+        
+
+    #---------------
+    def andF(self):
+        values = self.buffer[-2:]
         self.buffer.pop()
         self.buffer.pop()
+        self.buffer.append(values[1] and values[0])
+        
+
+    #---------------
+    def orF(self):
+        values = self.buffer[-2:]
+        self.buffer.pop()
+        self.buffer.pop()
+        self.buffer.append(values[1] or values[0])
 
 
     #---------------
@@ -229,46 +306,28 @@ class VirtualMachine():
         
 
     #---------------
-    def write(self, input):
-        if input[0] == '"' and str(input[-1:]) == '"':
-            print(input)
-            return
-        
-        for variable in self.variables:
-            if input == variable.name:
-                print(variable.value)
-                return
-        
-        needEval = False
-        for operation in ['+','-','*','/']:
-            if operation in input:
-                needEval = True
-                break
-        
-        if needEval == True:
-            print(self.evaluate(input))
-        else:
-            print(input)
-
-
+    def write(self, temp):
+        toprint = self.buffer[-(int(temp)):]
+        tempstr = ""
+        for item in toprint:
+            tempstr = tempstr + str(item)
+            self.buffer.pop()
+        print(tempstr)
+         
 
     #---------------
-    def evaluate(self, input):
-        evalstr = input.replace('+', ' ')
-        evalstr = evalstr.replace('-', ' ')
-        evalstr = evalstr.replace('/', ' ')
-        evalstr = evalstr.replace('*', ' ')
-        evallist = evalstr.split()
+    def read(self, valtype):
+        user_input = input()
 
-        dic = {}
-
-        for item in evallist:
-            for var in self.variables:
-                if item == var.name:
-                    dic[var.name] = var.value
-
-        return eval(input, dic)
-
+        if valtype == 'int':
+            self.buffer.append(int(user_input))
+        elif valtype == 'float':
+            self.buffer.append(float(user_input))
+        elif valtype == 'string':
+            self.buffer.append(str(user_input))
+        elif valtype == 'bool':
+            self.buffer.append(bool(user_input))
+        
 
 
 

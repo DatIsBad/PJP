@@ -6,7 +6,7 @@ from CodeGenerator import CodeGenerator
 from VirtualMachine import VirtualMachine
 
 
-filename = "input3.txt"
+filename = "input2.txt"
 input_stream = FileStream(filename)
 lexer = ExprLexer(input_stream)
 stream = CommonTokenStream(lexer)

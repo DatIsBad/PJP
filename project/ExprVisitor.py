@@ -74,6 +74,11 @@ class ExprVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by ExprParser#negation.
+    def visitNegation(self, ctx:ExprParser.NegationContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by ExprParser#comparison.
     def visitComparison(self, ctx:ExprParser.ComparisonContext):
         return self.visitChildren(ctx)
@@ -116,6 +121,11 @@ class ExprVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by ExprParser#addSubCon.
     def visitAddSubCon(self, ctx:ExprParser.AddSubConContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ExprParser#unaryMinus.
+    def visitUnaryMinus(self, ctx:ExprParser.UnaryMinusContext):
         return self.visitChildren(ctx)
 
 
